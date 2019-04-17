@@ -1,0 +1,26 @@
+[
+  {
+    "sha": "6f6109d759530883baae41ff8c5e75de407cf2f8",
+    "filename": "community-operators/elasticsearch-operator/TEST.txt",
+    "status": "added",
+    "additions": 1,
+    "deletions": 0,
+    "changes": 1,
+    "blob_url": "https://github.com/nmars/cvp-community-operators/blob/46c777568485098d8785dc36124b564b20493fd8/community-operators/elasticsearch-operator/TEST.txt",
+    "raw_url": "https://github.com/nmars/cvp-community-operators/raw/46c777568485098d8785dc36124b564b20493fd8/community-operators/elasticsearch-operator/TEST.txt",
+    "contents_url": "https://api.github.com/repos/nmars/cvp-community-operators/contents/community-operators/elasticsearch-operator/TEST.txt?ref=46c777568485098d8785dc36124b564b20493fd8",
+    "patch": "@@ -0,0 +1 @@\n+2019-04-16T14:26:06+00:00"
+  },
+  {
+    "sha": "7ebb787c38497dea022b539721be71dbc138977b",
+    "filename": "community-operators/microcks/TEST.txt",
+    "status": "added",
+    "additions": 1,
+    "deletions": 0,
+    "changes": 1,
+    "blob_url": "https://github.com/nmars/cvp-community-operators/blob/46c777568485098d8785dc36124b564b20493fd8/community-operators/microcks/TEST.txt",
+    "raw_url": "https://github.com/nmars/cvp-community-operators/raw/46c777568485098d8785dc36124b564b20493fd8/community-operators/microcks/TEST.txt",
+    "contents_url": "https://api.github.com/repos/nmars/cvp-community-operators/contents/community-operators/microcks/TEST.txt?ref=46c777568485098d8785dc36124b564b20493fd8",
+    "patch": "@@ -0,0 +1 @@\n+2019-04-16T19:17:30+00:00"
+  }
+]
