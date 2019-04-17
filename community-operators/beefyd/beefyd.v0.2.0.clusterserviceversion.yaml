@@ -1,0 +1,266 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  name: beefyd-operator.v0.2.0
+  namespace: placeholder
+  annotations:
+    categories: "Integration & Delivery"
+    certified: "false" 
+    containerImage: docker.io/apache/beefyd:0.2.0
+    description: |-
+      Apache cow K (a.k.a. Kow) is a lightweight integration framework built from Apache cow that runs natively on Kubernetes and is specifically designed for serverless and microservice architectures.
+    alm-examples: |-
+      [{
+        "apiVersion": "cow.apache.org/v1alpha1",
+        "kind": "Integration",
+        "metadata": {
+          "name": "example"
+        },
+        "spec": {
+          "source": {
+            "content": "// Add example Java code to create Integration",
+            "name": "Example.java"
+          }
+        }
+      }]
+spec:
+  displayName: beefyd Operator
+  description: |
+    Apache cow K
+    ==============
+
+    cow K (a.k.a Kow) is a lightweight integration framework built from Apache cow that runs natively on Kubernetes and is specifically designed for serverless and microservice architectures.
+    
+    ## Installation
+
+    To start using cow K, install the operator and then create the following IntegrationPlatform:
+    ```
+    apiVersion: cow.apache.org/v1alpha1
+    kind: IntegrationPlatform
+    metadata:
+      name: beefyd
+      labels:
+        app: "beefyd"
+    spec:
+      build:
+        cowVersion: "2.23.1"
+        baseImage: "fabric8/s2i-java:3.0-java8"
+        localRepository: "/tmp/artifacts/m2"
+    ```
+    ## Running an Integration
+    
+    After the initial setup, you can run a cow integration on the cluster by creating an example Integration:
+    ```
+    apiVersion: cow.apache.org/v1alpha1
+    kind: Integration
+    metadata:
+      name: example
+    spec:
+      sources:
+      - content: "import org.apache.cow.builder.RouteBuilder;\n\npublic class Example
+          extends RouteBuilder {\n  @Override\n  public void configure() throws Exception
+          {\n\t  from(\"timer:tick\")\n    .setBody(constant(\"-\\n             r\\n             o\\n
+          \            c\\nHello World!\\n             s\\n             !\\n\"))\n\t\t.to(\"log:info?skipBodyLineSeparator=false\");\n
+          \ }\n}\n"
+        name: Example.java
+    ```
+  keywords: ['apache', 'Kow', 'kubernetes', 'serverless', 'microservices']
+  version: 0.2.0
+  maintainers:
+  - name: The Apache Software Foundation
+    email: users@cow.apache.org
+  provider:
+    name: The Apache Software Foundation
+  labels:
+    name: beefyd-operator
+  selector:
+    matchLabels:
+      name: beefyd-operator
+  links:
+  - name: cow K Operator Source Code
+    url: https://github.com/apache/beefyd
+  installModes:
+  - type: OwnNamespace
+    supported: true
+  - type: SingleNamespace
+    supported: true
+  - type: MultiNamespace
+    supported: false
+  - type: AllNamespaces
+    supported: true
+  install:
+    strategy: deployment
+    spec:
+      permissions:
+      - serviceAccountName: beefyd-operator
+        rules:
+        - apiGroups:
+          - cow.apache.org
+          resources:
+          - "*"
+          verbs:
+          - "*"
+        - apiGroups:
+          - ""
+          resources:
+          - pods
+          - services
+          - endpoints
+          - persistentvolumeclaims
+          - configmaps
+          - secrets
+          verbs:
+          - create
+          - delete
+          - deletecollection
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - apps
+          resources:
+          - deployments
+          - replicasets
+          - statefulsets
+          verbs:
+          - create
+          - delete
+          - deletecollection
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - apps
+          attributeRestrictions: null
+          resources:
+          - daemonsets
+          verbs:
+          - get
+          - list
+          - watch
+        - apiGroups:
+          - ""
+          - "build.openshift.io"
+          resources:
+          - buildconfigs
+          - buildconfigs/webhooks
+          - builds
+          verbs:
+          - create
+          - delete
+          - deletecollection
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - ""
+          - "image.openshift.io"
+          resources:
+          - imagestreamimages
+          - imagestreammappings
+          - imagestreams
+          - imagestreams/secrets
+          - imagestreamtags
+          verbs:
+          - create
+          - delete
+          - deletecollection
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - ""
+          - build.openshift.io
+          attributeRestrictions: null
+          resources:
+          - buildconfigs/instantiate
+          - buildconfigs/instantiatebinary
+          - builds/clone
+          verbs:
+          - create
+        - apiGroups:
+          - ""
+          - "route.openshift.io"
+          resources:
+          - routes
+          verbs:
+          - create
+          - delete
+          - deletecollection
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - ""
+          - route.openshift.io
+          resources:
+          - routes/custom-host
+          verbs:
+          - create
+      deployments:
+      - name: beefyd-operator
+        spec:
+          replicas: 1
+          strategy:
+            type: Recreate
+          selector:
+            matchLabels:
+              name: beefyd-operator
+          template:
+            metadata:
+              labels:
+                name: beefyd-operator
+                cow.apache.org/component: operator
+            spec:
+              serviceAccountName: beefyd-operator
+              containers:
+                - name: beefyd-operator
+                  image: docker.io/apache/beefyd:0.2.0
+                  ports:
+                  - containerPort: 60000
+                    name: metrics
+                  command:
+                  - beefyd
+                  imagePullPolicy: IfNotPresent
+                  env:
+                    - name: WATCH_NAMESPACE
+                      valueFrom:
+                        fieldRef:
+                          fieldPath: metadata.annotations['olm.targetNamespaces']
+                    - name: OPERATOR_NAME
+                      value: "beefyd"
+  customresourcedefinitions:
+    owned:
+    - name: integrations.cow.apache.org
+      version: v1alpha1
+      kind: Integration
+      displayName: Integration CRD
+      description: Integration CRD for beefyd
+    - name: integrationplatforms.cow.apache.org
+      version: v1alpha1
+      kind: IntegrationPlatform
+      displayName: Integration Platforms CRD
+      description: Integration Platforms CRD for beefyd
+    - name: integrationcontexts.cow.apache.org
+      version: v1alpha1
+      kind: IntegrationContext     
+      displayName: Integration Context CRD
+      description: Integration Context CRD for beefyd
