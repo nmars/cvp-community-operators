@@ -3,3 +3,4 @@ channels:
 - name: alpha
   currentCSV: hazelcast-operator.v0.0.1
 defaultChannel: alpha
+# 2019-04-25T15:03:50+00:00
